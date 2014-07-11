@@ -66,19 +66,21 @@ class Connection(object):
     any other mode including blank (None) thereby explicitly clearing the SQL mode.
     """
     def __init__(self, host, database, user=None, password=None,
-                 max_idle_time=7 * 3600, connect_timeout=0, 
+                 max_idle_time=7 * 3600, connect_timeout=0,
                  time_zone="+0:00", charset = "utf8", sql_mode="TRADITIONAL"):
         self.host = host
         self.database = database
         self.max_idle_time = float(max_idle_time)
 
         args = dict(conv=CONVERSIONS, use_unicode=True, charset=charset,
-                    db=database, init_command=('SET time_zone = "%s"' % time_zone),
-                    connect_timeout=connect_timeout, sql_mode=sql_mode)
+                    db=database, connect_timeout=connect_timeout,
+                    sql_mode=sql_mode)
         if user is not None:
             args["user"] = user
         if password is not None:
             args["passwd"] = password
+        if time_zone is not None:
+            args['init_command'] = ('SET time_zone = "%s"' % time_zone)
 
         # We accept a path to a MySQL socket file or a host(:port) string
         if "/" in host:
